@@ -1,0 +1,79 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-degen}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a real password in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-degen_warrior_site}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-degen}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      target: runner
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER:-degen}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-degen_warrior_site}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:?set a real secret in .env}
+    expose:
+      - "3000"
+
+  # One-shot migration/seed runner — applies schema.sql, seeds roadmap
+  # phases + demo posts, and creates the first admin user, then exits.
+  # Run with: docker compose run --rm migrate
+  migrate:
+    build:
+      context: .
+      target: migrator
+    profiles: ["tools"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-degen}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-degen_warrior_site}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@degenwarrior.io}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:?set a real admin password in .env}
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+  redis_data:
+  caddy_data:
+  caddy_config:

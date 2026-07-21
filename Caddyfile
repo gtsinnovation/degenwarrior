@@ -1,0 +1,11 @@
+www.degenwarrior.io, degenwarrior.io {
+	reverse_proxy app:3000
+
+	encode gzip zstd
+
+	header {
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "same-origin"
+	}
+}
