@@ -1,11 +1,14 @@
-import { MessageCircle, Send, Video, X as XLogo } from "lucide-react";
+import Image from "next/image";
+import { MessageCircle, Send, Video } from "lucide-react";
 import { WarriorMark } from "@/components/warrior-mark";
 
+const X_LOGO_URL = "https://galaxy-prod.tlcdn.com/view/user_321HpBS0N3wNsExhmni8Y9Gx4VV/3e8b4b7ad98a4368b6ef18d0c34f7ab9.jpg";
+
 const SOCIALS = [
-  { icon: XLogo, label: "X", href: "https://x.com/degenwar_game" },
-  { icon: Video, label: "YouTube", href: "#" },
-  { icon: MessageCircle, label: "Discord", href: "#" },
-  { icon: Send, label: "Telegram", href: "#" },
+  { label: "X", href: "https://x.com/degenwar_game", image: X_LOGO_URL },
+  { label: "YouTube", href: "#", icon: Video },
+  { label: "Discord", href: "#", icon: MessageCircle },
+  { label: "Telegram", href: "#", icon: Send },
 ];
 
 const FOOTER_LINKS = ["About Us", "Terms", "Contact", "Join Us", "Disclaimer"];
@@ -27,10 +30,14 @@ export function SiteFooter() {
               target={social.href !== "#" ? "_blank" : undefined}
               rel={social.href !== "#" ? "noopener noreferrer" : undefined}
               aria-label={social.label}
-              className="flex h-9 w-9 items-center justify-center rounded-full border"
+              className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border"
               style={{ borderColor: "var(--border-neon)", color: "var(--neon)" }}
             >
-              <social.icon size={16} />
+              {social.image ? (
+                <Image src={social.image} alt={`${social.label} logo`} width={18} height={18} className="rounded-sm" />
+              ) : (
+                social.icon && <social.icon size={16} />
+              )}
             </a>
           ))}
         </div>
