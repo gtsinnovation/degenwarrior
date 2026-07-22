@@ -5,6 +5,13 @@ import { mapPost } from "@/lib/mappers";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 
+// This page queries Postgres directly. Without this, Next.js tries to
+// statically prerender it at `next build` time — but no database is
+// running during the Docker image build (Postgres only starts later as a
+// separate container), so the build fails trying to connect. Forcing
+// dynamic rendering defers the query to real request time instead.
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Updates — Degen Warrior",
   description: "All community updates and progress reports from Degen Warrior.",
