@@ -1,11 +1,11 @@
-import { MessageCircle, Send, Video, ExternalLink } from "lucide-react";
+import { MessageCircle, Send, Video, X as XLogo } from "lucide-react";
 import { WarriorMark } from "@/components/warrior-mark";
 
 const SOCIALS = [
-  { icon: ExternalLink, label: "X" },
-  { icon: Video, label: "YouTube" },
-  { icon: MessageCircle, label: "Discord" },
-  { icon: Send, label: "Telegram" },
+  { icon: XLogo, label: "X", href: "https://x.com/degenwar_game" },
+  { icon: Video, label: "YouTube", href: "#" },
+  { icon: MessageCircle, label: "Discord", href: "#" },
+  { icon: Send, label: "Telegram", href: "#" },
 ];
 
 const FOOTER_LINKS = ["About Us", "Terms", "Contact", "Join Us", "Disclaimer"];
@@ -23,7 +23,9 @@ export function SiteFooter() {
           {SOCIALS.map((social) => (
             <a
               key={social.label}
-              href="#"
+              href={social.href}
+              target={social.href !== "#" ? "_blank" : undefined}
+              rel={social.href !== "#" ? "noopener noreferrer" : undefined}
               aria-label={social.label}
               className="flex h-9 w-9 items-center justify-center rounded-full border"
               style={{ borderColor: "var(--border-neon)", color: "var(--neon)" }}
