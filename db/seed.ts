@@ -11,7 +11,7 @@ const ROADMAP_PHASES = [
     bullets: [
       "Brand + Degen Sentinel tool live",
       "Community channels opened (X, Discord, Telegram)",
-      "Whitelist / waitlist opens",
+      "Fair-launch waitlist opens — 24h notice + airdrop eligibility for holders",
     ],
     status: "active",
   },
@@ -67,7 +67,10 @@ async function seed(): Promise<void> {
     await pool.query(
       `INSERT INTO roadmap_phases (id, position, title, bullets, status)
        VALUES ($1,$2,$3,$4,$5)
-       ON CONFLICT (id) DO UPDATE SET position = EXCLUDED.position, title = EXCLUDED.title`,
+       ON CONFLICT (id) DO UPDATE SET
+         position = EXCLUDED.position,
+         title = EXCLUDED.title,
+         bullets = EXCLUDED.bullets`,
       [phase.id, phase.position, phase.title, JSON.stringify(phase.bullets), phase.status]
     );
   }
