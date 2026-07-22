@@ -8,6 +8,11 @@ import { JoinRanksSection } from "@/components/join-ranks-section";
 import { UpdatesSection } from "@/components/updates-section";
 import { SiteFooter } from "@/components/site-footer";
 
+// Queries Postgres directly at render time — without this, Next.js may try
+// to statically prerender the homepage during `next build`, when no
+// database is reachable yet (Postgres starts later as its own container).
+export const dynamic = "force-dynamic";
+
 async function getHomeData() {
   const [phasesResult, postsResult] = await Promise.all([
     pool.query(`SELECT id, position, title, bullets, status FROM roadmap_phases ORDER BY position ASC`),
