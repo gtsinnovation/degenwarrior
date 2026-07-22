@@ -1,0 +1,5 @@
+# This file exists only so git tracks the (otherwise empty) public/ directory.
+# Next.js requires a public/ folder to exist at build time, and the Docker
+# runner stage copies it explicitly — without this placeholder the folder
+# is entirely absent from the repo (git doesn't track empty directories),
+# which breaks `COPY .../public ./public` in the Dockerfile.
