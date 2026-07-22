@@ -8,46 +8,53 @@ function PhaseCard({ phase }: { phase: RoadmapPhase }) {
   const isLocked = phase.status === "locked";
 
   return (
-    <div
-      className={cn(
-        "holo-panel cut-corners relative flex flex-col gap-3 border p-6 transition-all",
-        isActive && "animate-pulse-glow",
-        isLocked && "opacity-50 grayscale"
-      )}
-      style={{
-        borderColor: isCompleted ? "var(--border-neon)" : isActive ? "var(--border-twist)" : "var(--border-soft)",
-        boxShadow: isActive ? "var(--glow-twist-md)" : isCompleted ? "var(--glow-green-sm)" : undefined,
-      }}
-    >
+    // Outer wrapper is NOT clipped — the badge lives here, as a sibling of
+    // the clipped card below, so the card's cut-corner clip-path never cuts
+    // it off. (Clip-path clips the whole painted box, including any child
+    // that's absolutely positioned outside the box's own bounds — the badge
+    // was a child of the clipped card before, which is why it got truncated.)
+    <div className="relative">
       {isActive && (
         <span
-          className="absolute -top-3 left-6 rounded-full border px-3 py-0.5 font-mono text-[10px] uppercase tracking-widest"
+          className="absolute -top-3 left-6 z-10 rounded-full border px-3 py-0.5 font-mono text-[10px] uppercase tracking-widest"
           style={{ borderColor: "var(--border-twist)", color: "var(--twist)", background: "#050505" }}
         >
           You Are Here
         </span>
       )}
 
-      <div className="flex items-center justify-between">
-        <h3 className="font-display text-lg font-bold uppercase tracking-wide text-white">{phase.title}</h3>
-        {isCompleted && <Check size={18} style={{ color: "var(--neon)" }} />}
-        {isLocked && <Lock size={16} className="text-[var(--text-muted)]" />}
+      <div
+        className={cn(
+          "holo-panel cut-corners flex flex-col gap-3 border p-6 pt-7 transition-all",
+          isActive && "animate-pulse-glow",
+          isLocked && "opacity-50 grayscale"
+        )}
+        style={{
+          borderColor: isCompleted ? "var(--border-neon)" : isActive ? "var(--border-twist)" : "var(--border-soft)",
+          boxShadow: isActive ? "var(--glow-twist-md)" : isCompleted ? "var(--glow-green-sm)" : undefined,
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="font-display text-lg font-bold uppercase tracking-wide text-white">{phase.title}</h3>
+          {isCompleted && <Check size={18} style={{ color: "var(--neon)" }} />}
+          {isLocked && <Lock size={16} className="text-[var(--text-muted)]" />}
+        </div>
+
+        <ul className="space-y-1.5 text-sm text-[var(--text-secondary)]">
+          {phase.bullets.map((bullet) => (
+            <li key={bullet} className="flex gap-2">
+              <span style={{ color: isLocked ? "var(--text-muted)" : "var(--neon)" }}>&raquo;</span>
+              {bullet}
+            </li>
+          ))}
+        </ul>
+
+        {isLocked && (
+          <span className="mt-1 font-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
+            Upcoming
+          </span>
+        )}
       </div>
-
-      <ul className="space-y-1.5 text-sm text-[var(--text-secondary)]">
-        {phase.bullets.map((bullet) => (
-          <li key={bullet} className="flex gap-2">
-            <span style={{ color: isLocked ? "var(--text-muted)" : "var(--neon)" }}>&raquo;</span>
-            {bullet}
-          </li>
-        ))}
-      </ul>
-
-      {isLocked && (
-        <span className="mt-1 font-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
-          Upcoming
-        </span>
-      )}
     </div>
   );
 }
