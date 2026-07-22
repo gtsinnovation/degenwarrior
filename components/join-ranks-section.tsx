@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { ExternalLink, MessageCircle, Shield, Clock, Loader2, CheckCircle } from "lucide-react";
+import { ExternalLink, MessageCircle, Bell, Gift, Loader2, CheckCircle } from "lucide-react";
 
 const STEPS = [
   { icon: ExternalLink, title: "Follow On X", desc: "Follow @degenwar_game for real-time updates." },
   { icon: MessageCircle, title: "Join Discord / Telegram", desc: "Where the actual army gathers and talks." },
-  { icon: Shield, title: "Get Whitelisted", desc: "Verified members get priority access at launch." },
-  { icon: Clock, title: "Await Launch", desc: "No token yet — just an army being built." },
+  { icon: Bell, title: "Join The Waitlist", desc: "Get a 24-hour heads-up before launch — fair launch for everyone, no priority access." },
+  { icon: Gift, title: "Hold For The Airdrop", desc: "Waitlist members who hold through the airdrop date qualify for the drop." },
 ];
 
 export function JoinRanksSection() {
@@ -48,7 +48,7 @@ export function JoinRanksSection() {
           Join The <span style={{ color: "var(--neon)" }}>Warrior Ranks</span>
         </h2>
         <p className="mt-3 font-mono text-sm text-[var(--text-secondary)]">
-          No token yet — just an army being built.
+          Fair launch. No token yet — just an army being built.
         </p>
       </div>
 
