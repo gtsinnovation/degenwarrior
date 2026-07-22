@@ -2,6 +2,12 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    labels:
+      com.degenwarrior.project: "degenwarrior-marketing"
+      com.degenwarrior.service: "database"
+      com.degenwarrior.environment: "production"
+      org.opencontainers.image.title: "Degen Warrior Postgres"
+      org.opencontainers.image.description: "Postgres database for the Degen Warrior marketing site"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-degen}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a real password in .env}
@@ -17,6 +23,12 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    labels:
+      com.degenwarrior.project: "degenwarrior-marketing"
+      com.degenwarrior.service: "cache"
+      com.degenwarrior.environment: "production"
+      org.opencontainers.image.title: "Degen Warrior Redis"
+      org.opencontainers.image.description: "Redis cache / rate-limiter store for the Degen Warrior marketing site"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -25,11 +37,20 @@ services:
       timeout: 5s
       retries: 10
 
-  app:
+  degenwarrior-app:
     build:
       context: .
       target: runner
     restart: unless-stopped
+    container_name: degenwarrior-app
+    labels:
+      com.degenwarrior.project: "degenwarrior-marketing"
+      com.degenwarrior.service: "web"
+      com.degenwarrior.service-name: "degenwarrior-app"
+      com.degenwarrior.environment: "production"
+      org.opencontainers.image.title: "Degen Warrior Web"
+      org.opencontainers.image.description: "Next.js marketing site + admin dashboard for Degen Warrior (pre-launch)"
+      org.opencontainers.image.source: "https://github.com/gtsinnovation/degenwarrior"
     depends_on:
       postgres:
         condition: service_healthy
@@ -51,6 +72,12 @@ services:
       context: .
       target: migrator
     profiles: ["tools"]
+    labels:
+      com.degenwarrior.project: "degenwarrior-marketing"
+      com.degenwarrior.service: "migration"
+      com.degenwarrior.environment: "production"
+      org.opencontainers.image.title: "Degen Warrior DB Migrate"
+      org.opencontainers.image.description: "One-shot schema + seed + admin-user bootstrap job"
     depends_on:
       postgres:
         condition: service_healthy
@@ -62,6 +89,12 @@ services:
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
+    labels:
+      com.degenwarrior.project: "degenwarrior-marketing"
+      com.degenwarrior.service: "reverse-proxy"
+      com.degenwarrior.environment: "production"
+      org.opencontainers.image.title: "Degen Warrior Caddy"
+      org.opencontainers.image.description: "Reverse proxy + automatic HTTPS for www.degenwarrior.io"
     ports:
       - "80:80"
       - "443:443"
@@ -70,7 +103,7 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - app
+      - degenwarrior-app
 
 volumes:
   postgres_data:
