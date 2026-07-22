@@ -1,5 +1,5 @@
 www.degenwarrior.io, degenwarrior.io {
-	reverse_proxy app:3000
+	reverse_proxy degenwarrior-app:3000
 
 	encode gzip zstd
 
