@@ -6,23 +6,31 @@
 
 FROM node:20-alpine AS deps
 WORKDIR /app
+
 COPY package.json ./
 RUN npm install
 
+COPY . .
+
+# ── Stage 2: builder ────────────────────────────────────────────
 FROM node:20-alpine AS builder
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY --from=deps /app ./
+
 RUN npm run build
 
-# ── Slim runtime image for the web server ──
+# ── Stage 3: runner ────────────────────────────────────────────
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Standalone output already includes a minimal node_modules + server.js
-COPY --from=builder /app/public ./public
+# Copy public assets from source (deps stage)
+COPY --from=deps /app/public ./public
+
+# Copy Next.js standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
@@ -38,5 +46,5 @@ CMD ["node", "server.js"]
 FROM node:20-alpine AS migrator
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY --from=deps /app ./
 ENTRYPOINT ["npx", "tsx", "db/seed.ts"]
