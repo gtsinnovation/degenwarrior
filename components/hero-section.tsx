@@ -9,7 +9,7 @@ export function HeroSection() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at top left, rgba(0,255,102,0.10), transparent 55%), radial-gradient(ellipse at bottom right, rgba(0,229,255,0.08), transparent 50%)",
+            "radial-gradient(ellipse at top left, rgba(232,195,74,0.10), transparent 55%), radial-gradient(ellipse at bottom right, rgba(255,217,102,0.08), transparent 50%)",
         }}
       />
 
@@ -57,7 +57,7 @@ export function HeroSection() {
             alt="Degen Warrior masked samurai character"
             width={1475}
             height={1024}
-            className="w-full drop-shadow-[0_0_40px_rgba(0,255,102,0.25)]"
+            className="w-full drop-shadow-[0_0_40px_rgba(232,195,74,0.25)]"
             priority
           />
         </div>
